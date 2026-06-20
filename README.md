@@ -11,7 +11,36 @@ Lightweight, local-first, defensive-only tool that detects risky localhost expos
 
 The 2025–2026 wave of MCP security research revealed widespread issues with local MCP servers being accidentally exposed (via `0.0.0.0` binding or DNS rebinding attacks), enabling confused-deputy and drive-by attacks on developer machines.
 
-This tool gives you a fast, actionable audit of exactly those risks — with zero offensive capability.
+### 3. Review Findings
+The audit outputs a structured report highlighting network bindings, vulnerable frameworks, and the potential for a confused deputy attack.
+Each finding includes an actionable recommendation.
+
+## Custom Plugins
+You can inject your own custom security checks dynamically without modifying the core script.
+
+1. Create a `plugins/` directory next to `defensive_mcp_audit.py`.
+2. Add a Python file (e.g., `my_check.py`) that implements a subclass of `BaseAuditPlugin`.
+
+**Example: `plugins/docker_check.py`**
+```python
+from defensive_mcp_audit import BaseAuditPlugin
+from typing import Dict, Any, List
+
+class DockerSocketExposurePlugin(BaseAuditPlugin):
+    def audit(self, report: Dict[str, Any], services: List[Dict[str, Any]]) -> None:
+        for svc in services:
+            if svc["port"] in {2375, 2376} and svc["address"] not in ("127.0.0.1", "::1"):
+                report["risk_score"] += 50
+                report["findings"].append({
+                    "id": "DOCKER_SOCKET_EXPOSED",
+                    "category": "Plugins",
+                    "severity": "critical",
+                    "title": "Exposed Docker API detected",
+                    "value": f"{svc['address']}:{svc['port']}",
+                    "note": "Docker API is exposed on a non-localhost interface."
+                })
+```
+All custom plugins are automatically discovered and executed before the final risk score is computed.
 
 ## Features (v0.2.0)
 
