@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "defensive-mcp-audit"
+version = "0.2.0"
+description = "Defensive security audit tool for AI Agent and MCP (Model Context Protocol) environments. Detects risky localhost exposure and confused-deputy risks."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Stijnman", email = "your-email@example.com"}
+]
+keywords = [
+    "security",
+    "mcp",
+    "ai-agent",
+    "defensive",
+    "localhost",
+    "confused-deputy",
+    "sarif",
+    "audit"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: System :: Systems Administration",
+]
+
+dependencies = []
+
+[project.optional-dependencies]
+cli = [
+    "typer[all]>=0.9.0",
+    "rich>=13.0.0",
+]
+
+[project.scripts]
+defensive-mcp-audit = "defensive_mcp_audit:_run_cli"
+
+[project.urls]
+Homepage = "https://github.com/Stijnman/defensive-mcp-audit"
+Repository = "https://github.com/Stijnman/defensive-mcp-audit"
+Issues = "https://github.com/Stijnman/defensive-mcp-audit/issues"
+Documentation = "https://github.com/Stijnman/defensive-mcp-audit#readme"
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+[tool.setuptools.package-data]
+"*" = ["templates/*"]
