@@ -10,9 +10,51 @@ Version: 0.2.0-quickwin
 import json
 import subprocess
 import sys
+import importlib.util
+import inspect
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+class BaseAuditPlugin:
+    """Base class for custom defensive audit plugins."""
+    def audit(self, report: Dict[str, Any], services: List[Dict[str, Any]]) -> None:
+        """
+        Modify `report` in place (append to report["findings"] and adjust report["risk_score"]).
+        `services` contains the list of discovered listening services.
+        """
+        pass
+
+def load_and_run_plugins(report: Dict[str, Any], services: List[Dict[str, Any]]) -> None:
+    """Dynamically load and run any plugins found in the local plugins/ directory."""
+    plugins_dir = Path("plugins")
+    if not plugins_dir.is_dir():
+        return
+        
+    for py_file in plugins_dir.glob("*.py"):
+        if py_file.name.startswith("_"):
+            continue
+        try:
+            module_name = f"plugins.{py_file.stem}"
+            spec = importlib.util.spec_from_file_location(module_name, py_file)
+            if spec and spec.loader:
+                module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(module)
+                
+                for name, obj in inspect.getmembers(module, inspect.isclass):
+                    # To handle circular/duplicate imports from __main__, we check base class names
+                    if any(base.__name__ == 'BaseAuditPlugin' for base in obj.__bases__):
+                        plugin_instance = obj()
+                        plugin_instance.audit(report, services)
+        except Exception as e:
+            report["findings"].append({
+                "id": "PLUGIN_LOAD_ERROR",
+                "category": "Plugins",
+                "severity": "info",
+                "title": f"Failed to load plugin {py_file.name}",
+                "value": str(e),
+                "note": "A plugin failed to load or execute."
+            })
 
 try:
     import typer
@@ -173,6 +215,8 @@ def audit_mcp_environment() -> Dict[str, Any]:
         "Disable unnecessary local services and MCP tools when not actively needed",
         "Apply least-privilege principles: only expose the exact tools an agent requires"
     ])
+
+    load_and_run_plugins(report, services)
 
     score = report["risk_score"]
     if score >= 60:
