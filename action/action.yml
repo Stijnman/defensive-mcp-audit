@@ -8,7 +8,7 @@ inputs:
   version:
     description: Release tag, branch, or commit SHA to run
     required: false
-    default: v0.3.1
+    default: v0.3.2
   format:
     description: Output format (sarif recommended for CI)
     required: false

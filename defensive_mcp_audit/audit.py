@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from defensive_mcp_audit.constants import VERSION
+from defensive_mcp_audit.docker_runtime import docker_findings
 from defensive_mcp_audit.frameworks import framework_findings
 from defensive_mcp_audit.mcp_config import parse_mcp_configs
 from defensive_mcp_audit.network import discover_listening_services, enrich_services
@@ -149,6 +150,16 @@ def audit_mcp_environment(
         )
 
     findings.extend(framework_findings())
+
+    docker_items = docker_findings()
+    if docker_items:
+        for finding in docker_items:
+            if finding.get("id") == "DOCKER_RISKY_PUBLISH":
+                risk_score += 10
+        findings.extend(docker_items)
+        recommendations.append(
+            "Bind Docker-published MCP ports to 127.0.0.1 (e.g. -p 127.0.0.1:8080:8080)"
+        )
 
     if mcp_servers:
         risky_configs = [server for server in mcp_servers if server.get("risk_notes")]

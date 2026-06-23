@@ -1,12 +1,8 @@
-# Byte-compiled / optimized / DLL files
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
-
-# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -25,68 +21,35 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+.venv/
+venv/
+ENV/
 
-# PyInstaller
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
+# Testing / coverage
+.pytest_cache/
+.coverage
 htmlcov/
 .tox/
 .nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
-
-# Translations
-*.mo
-*.pot
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# pytype static type analyzer
-.pytype/
-
-# Cython debug symbols
-cython_debug/
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
+*~
+
+# Reports (local audit output)
+audit-report.html
+results.sarif
+defensive_audit_report.json
+defensive-mcp-audit.sarif
+
+# Node (upload script)
+node_modules/
+package-lock.json
+package.json
 
 # OS
 .DS_Store
 Thumbs.db
-
-# Project specific
-defensive_audit_report.json
-*.sarif
-*.html
-report.html

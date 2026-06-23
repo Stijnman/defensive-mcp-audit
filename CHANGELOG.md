@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2026-06-23
+
+### Added
+- Docker runtime inspection (`docker ps` published port analysis)
+- PyPI trusted publishing in `release.yml` + `pypi` GitHub environment
+- `assets/social-preview.png` and `.github/social-preview.png`
+- `docs/PYPI_SETUP.md` and `scripts/upload_social_preview.mjs`
+- Docker unit tests
+
+### Changed
+- README PyPI badge and install instructions
+- Roadmap: PyPI workflow and Docker inspection marked complete
+
 ## [0.3.1] - 2026-06-23
 
 ### Added
@@ -53,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rich + Typer CLI with graceful fallback
 - `pyproject.toml`, GitHub Actions workflow, `SKILL.md`
 
+[0.3.2]: https://github.com/Stijnman/defensive-mcp-audit/releases/tag/v0.3.2
 [0.3.1]: https://github.com/Stijnman/defensive-mcp-audit/releases/tag/v0.3.1
 [0.3.0]: https://github.com/Stijnman/defensive-mcp-audit/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Stijnman/defensive-mcp-audit/releases/tag/v0.2.0

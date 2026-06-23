@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "defensive-mcp-audit"
-version = "0.3.1"
+version = "0.3.2"
 description = "Defensive security audit tool for AI Agent and MCP (Model Context Protocol) environments. Detects risky localhost exposure and confused-deputy risks."
 readme = "README.md"
 license = {text = "MIT"}

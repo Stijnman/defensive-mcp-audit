@@ -12,6 +12,7 @@
 <p align="center">
   <a href="https://github.com/Stijnman/defensive-mcp-audit/actions/workflows/defensive-mcp-audit.yml"><img src="https://github.com/Stijnman/defensive-mcp-audit/actions/workflows/defensive-mcp-audit.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/Stijnman/defensive-mcp-audit/releases/latest"><img src="https://img.shields.io/github/v/release/Stijnman/defensive-mcp-audit?label=release" alt="Release"></a>
+  <a href="https://pypi.org/project/defensive-mcp-audit/"><img src="https://img.shields.io/pypi/v/defensive-mcp-audit?label=pypi" alt="PyPI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="Python 3.9+"></a>
 </p>
@@ -36,6 +37,7 @@ This tool gives you a **fast, actionable, defensive-only** audit of those risks 
 | Smart classification | MCP-related vs system vs unknown processes |
 | Weighted scoring | Samba ≠ MCP — fewer false CRITICAL alerts |
 | MCP config scan | Claude, Cursor, VS Code, Grok, `.mcp.json` |
+| Docker inspection | Read-only `docker ps` port publish analysis |
 | Output formats | Terminal, JSON, SARIF, self-contained HTML |
 | CI-ready | GitHub Action + weekly SARIF workflow included |
 | Extensible | Plugin checks in `checks/` |
@@ -66,11 +68,10 @@ Findings:
 ## Install
 
 ```bash
-# From source (recommended today)
-pip install "git+https://github.com/Stijnman/defensive-mcp-audit@v0.3.1#egg=defensive-mcp-audit[cli]"
-
-# After PyPI publish
 pip install defensive-mcp-audit[cli]
+
+# Or from GitHub
+pip install "git+https://github.com/Stijnman/defensive-mcp-audit@v0.3.2#egg=defensive-mcp-audit[cli]"
 ```
 
 ## Python API
@@ -87,7 +88,7 @@ print(report["risk_level"], report["risk_score"])
 Add to any workflow:
 
 ```yaml
-- uses: Stijnman/defensive-mcp-audit/action@v0.3.1
+- uses: Stijnman/defensive-mcp-audit/action@v0.3.2
   with:
     upload-sarif: "true"
 ```
@@ -130,8 +131,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
 - [x] Plugin architecture (#1)
 - [x] MCP config discovery (#2)
 - [x] Composite GitHub Action
-- [ ] PyPI publish
-- [ ] Docker / container runtime inspection
+- [x] PyPI trusted publishing workflow
+- [x] Docker / container runtime inspection
 - [ ] Historical risk trending
 
 ## Ethics
