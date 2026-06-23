@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 REPO_URL = "https://github.com/Stijnman/defensive-mcp-audit"
 
 MCP_COMMON_PORTS = frozenset({3000, 5000, 5173, 6274, 6277, 8000, 8080, 8765, 9000, 11434})

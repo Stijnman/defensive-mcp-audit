@@ -1,0 +1,53 @@
+name: Defensive MCP Audit
+description: Run a defensive MCP / AI agent security audit and optionally upload SARIF to GitHub Code Scanning
+branding:
+  icon: shield
+  color: green
+
+inputs:
+  version:
+    description: Release tag, branch, or commit SHA to run
+    required: false
+    default: v0.3.1
+  format:
+    description: Output format (sarif recommended for CI)
+    required: false
+    default: sarif
+  output:
+    description: Output file path
+    required: false
+    default: defensive-mcp-audit.sarif
+  upload-sarif:
+    description: Upload SARIF to GitHub Code Scanning
+    required: false
+    default: "true"
+  python-version:
+    description: Python version for the runner
+    required: false
+    default: "3.11"
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install defensive-mcp-audit
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install "git+https://github.com/Stijnman/defensive-mcp-audit@${{ inputs.version }}#egg=defensive-mcp-audit[cli]"
+
+    - name: Run audit
+      shell: bash
+      run: |
+        python -m defensive_mcp_audit --format "${{ inputs.format }}" --output "${{ inputs.output }}"
+
+    - name: Upload SARIF
+      if: inputs.upload-sarif == 'true' && inputs.format == 'sarif'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.output }}
+        category: defensive-mcp-audit

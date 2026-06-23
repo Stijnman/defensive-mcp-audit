@@ -1,49 +1,52 @@
 # Contributing to defensive-mcp-audit
 
-Thank you for your interest in contributing to **defensive-mcp-audit**!
+Thank you for helping make local MCP and AI agent environments safer.
 
-This project is strictly **defensive**. All contributions must respect this scope:
+This project is strictly **defensive**:
+
 - Read-only inspection only
 - No exploitation, attack simulation, or offensive tooling
-- Focus on detection, hardening recommendations, and developer safety
+- Detection, hardening recommendations, and developer safety
 
-## How to Contribute
-
-1. **Fork** the repository and create your branch from `main`.
-2. Make your changes.
-3. Ensure the tool still runs cleanly (`python3 defensive_mcp_audit.py`).
-4. Add or update tests if applicable.
-5. Submit a **Pull Request**.
-
-## Development Setup
+## Quick start
 
 ```bash
 git clone https://github.com/Stijnman/defensive-mcp-audit.git
 cd defensive-mcp-audit
 python3 -m venv .venv
 source .venv/bin/activate
-pip install "typer[all]" rich
+pip install -e ".[dev]"
+python -m unittest discover -s tests -v
+python -m defensive_mcp_audit
 ```
 
-## Code Style
+## Adding a defensive check (plugin)
 
-- Keep the core lightweight and dependency-minimal.
-- New checks should be easy to add (see upcoming plugin architecture in v0.3).
-- All findings must include clear `id`, `severity`, `title`, and `note`.
-- Prefer defensive heuristics over active scanning.
+1. Create `checks/your_check.py`
+2. Implement `run_check(context: dict) -> list[dict]`
+3. Return findings with `id`, `category`, `severity`, `title`, `value`, `note`
+4. See `checks/example_port_check.py` for a template
 
-## Reporting Issues
+Plugins load automatically unless `--no-plugins` is passed.
 
-Please use the issue templates and label them appropriately:
-- `bug`
-- `enhancement`
-- `good first issue`
-- `documentation`
+## Pull requests
 
-Security-related reports should be handled responsibly (we welcome private disclosure for any potential issues in the tool itself).
+- Branch from `main`
+- Keep changes focused
+- Update tests and `CHANGELOG.md` for user-facing changes
+- Use the PR template
+
+## Code style
+
+- Core package stays dependency-minimal
+- Prefer clear heuristics over invasive scanning
+- Log discovery failures to stderr instead of silent `except: pass`
+- All new findings must be actionable and documented
+
+## Security
+
+Report tool vulnerabilities via [GitHub Security Advisories](https://github.com/Stijnman/defensive-mcp-audit/security/advisories/new). See `SECURITY.md`.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the MIT License.
-
-Thank you for helping make local AI agent and MCP environments safer!
+Contributions are licensed under the MIT License.

@@ -1,138 +1,143 @@
-# defensive-mcp-audit
+<p align="center">
+  <img src="assets/logo.svg" alt="defensive-mcp-audit" width="96">
+</p>
 
-**Defensive Security Audit for AI Agent & MCP (Model Context Protocol) Environments**
+<h1 align="center">defensive-mcp-audit</h1>
 
-Lightweight, local-first, defensive-only tool that detects risky localhost exposure, weak network bindings (`0.0.0.0`), MCP configuration issues, and confused-deputy risks in local AI agent and MCP server setups.
+<p align="center">
+  <strong>Defensive security audit for AI Agent & MCP environments</strong><br>
+  Detect risky localhost exposure, weak bindings, and confused-deputy risks — with zero offensive capability.
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+<p align="center">
+  <a href="https://github.com/Stijnman/defensive-mcp-audit/actions/workflows/defensive-mcp-audit.yml"><img src="https://github.com/Stijnman/defensive-mcp-audit/actions/workflows/defensive-mcp-audit.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/Stijnman/defensive-mcp-audit/releases/latest"><img src="https://img.shields.io/github/v/release/Stijnman/defensive-mcp-audit?label=release" alt="Release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT"></a>
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="Python 3.9+"></a>
+</p>
 
-## Why This Exists
+<p align="center">
+  <img src="assets/social-preview.svg" alt="defensive-mcp-audit preview" width="720">
+</p>
 
-The 2025–2026 wave of MCP security research revealed widespread issues with local MCP servers being accidentally exposed (via `0.0.0.0` binding or DNS rebinding attacks), enabling confused-deputy and drive-by attacks on developer machines.
+---
 
-This tool gives you a fast, actionable audit of exactly those risks — with zero offensive capability.
+## Why this exists
 
-## Features (v0.3.0)
+MCP security research (2025–2026) showed that local MCP servers are often accidentally exposed via `0.0.0.0` bindings or reachable through DNS rebinding — enabling confused-deputy and drive-by attacks on developer machines.
 
-- Dynamic discovery of listening TCP services (`ss` on Linux, `netstat` fallback)
-- **Process-aware classification** — MCP-related vs system vs unknown listeners
-- **Weighted risk scoring** — Samba on `0.0.0.0` no longer triggers false CRITICAL alerts
-- Static MCP config discovery (Claude Desktop, Cursor, VS Code, Grok, `.mcp.json`)
-- Framework inventory for installed AI/MCP Python packages
-- Plugin architecture with example check in `checks/`
-- Multiple output formats:
-  - Rich terminal (`text`)
-  - `json`
-  - `sarif` (GitHub Code Scanning ready)
-  - Self-contained `html` report (no CDN dependency)
-- Graceful fallback when `typer` / `rich` are not installed
-- Designed as both a CLI tool and importable Python package
+This tool gives you a **fast, actionable, defensive-only** audit of those risks on your own machine.
 
-## Quick Start
+## Features
+
+| Capability | Description |
+|------------|-------------|
+| Listener discovery | `ss` on Linux, `netstat` fallback elsewhere |
+| Smart classification | MCP-related vs system vs unknown processes |
+| Weighted scoring | Samba ≠ MCP — fewer false CRITICAL alerts |
+| MCP config scan | Claude, Cursor, VS Code, Grok, `.mcp.json` |
+| Output formats | Terminal, JSON, SARIF, self-contained HTML |
+| CI-ready | GitHub Action + weekly SARIF workflow included |
+| Extensible | Plugin checks in `checks/` |
+
+## Quick start
 
 ```bash
 git clone https://github.com/Stijnman/defensive-mcp-audit.git
 cd defensive-mcp-audit
 pip install -e ".[cli]"
 
-# Basic run
-python3 -m defensive_mcp_audit
-
-# Generate HTML report
-python3 -m defensive_mcp_audit --format html -o audit-report.html
-
-# Generate SARIF for CI / GitHub Code Scanning
-python3 -m defensive_mcp_audit --format sarif -o results.sarif
+python -m defensive_mcp_audit
+python -m defensive_mcp_audit --format html -o audit-report.html
+python -m defensive_mcp_audit --format sarif -o results.sarif
 ```
 
-## Installation (via pip)
+### Example output
+
+```
+Risk: HIGH (65)
+
+Findings:
+  [medium] UNKNOWN_EXPOSED_LISTENER — Unclassified 0.0.0.0 bindings
+  [info]   MCP_LOCALHOST_OK         — Ollama on 127.0.0.1:11434
+  [info]   SYSTEM_EXPOSED_LISTENER  — smbd on 0.0.0.0:445 (informational)
+```
+
+## Install
 
 ```bash
-pip install defensive-mcp-audit[cli]
+# From source (recommended today)
+pip install "git+https://github.com/Stijnman/defensive-mcp-audit@v0.3.1#egg=defensive-mcp-audit[cli]"
 
-defensive-mcp-audit --help
+# After PyPI publish
+pip install defensive-mcp-audit[cli]
 ```
 
-## Use as a Python Module
+## Python API
 
 ```python
 from defensive_mcp_audit import audit_mcp_environment, generate_sarif, generate_html_report
 
 report = audit_mcp_environment()
 print(report["risk_level"], report["risk_score"])
-
-sarif = generate_sarif(report)
-html = generate_html_report(report)
 ```
 
-## GitHub Actions Example (SARIF upload)
+## GitHub Action (one-click CI)
 
-See `.github/workflows/defensive-mcp-audit.yml`
+Add to any workflow:
 
-## Recommended Hardening (from typical audit output)
+```yaml
+- uses: Stijnman/defensive-mcp-audit/action@v0.3.1
+  with:
+    upload-sarif: "true"
+```
 
-1. Bind every MCP / agent HTTP or WebSocket server to `127.0.0.1` only
-2. Require authentication tokens on all local endpoints
-3. Keep agent frameworks up to date
-4. Run high-privilege tools inside containers
-5. Apply least-privilege: only expose the tools an agent actually needs
+Or run the full workflow — see [`.github/workflows/defensive-mcp-audit.yml`](.github/workflows/defensive-mcp-audit.yml).
 
-## Project Structure
+## Finding reference
+
+| ID | Severity | Meaning |
+|----|----------|---------|
+| `MCP_EXPOSED_NON_LOCALHOST` | high | MCP-related service on `0.0.0.0` — fix immediately |
+| `UNKNOWN_EXPOSED_LISTENER` | medium | Unclassified `0.0.0.0` listener — review |
+| `SYSTEM_EXPOSED_LISTENER` | info | OS service (e.g. Samba) — noted, low MCP impact |
+| `MCP_CONFIG_RISK` | medium | Risky patterns in MCP client config |
+| `CONFUSED_DEPUTY_RISK` | medium/high | Local MCP surface + agent/browser trust boundary |
+
+## Project structure
 
 ```
 defensive-mcp-audit/
-├── defensive_mcp_audit/          # Python package
-│   ├── audit.py                    # Core orchestration
-│   ├── network.py                  # Listener discovery + classification
-│   ├── mcp_config.py               # Static MCP config parsing
-│   ├── plugins/                    # Plugin registry
-│   └── ...
-├── checks/                         # Example/custom defensive checks
-├── tests/                          # Unit tests
-├── defensive_mcp_audit.py          # Backward-compatible entry point
-├── pyproject.toml
-├── SKILL.md
-└── .github/workflows/
+├── defensive_mcp_audit/     # Core package
+├── checks/                  # Plugin checks
+├── action/                  # Composite GitHub Action
+├── tests/
+├── SKILL.md                 # Agent skill integration
+└── .github/
 ```
-
-## Plugin checks
-
-Add a module under `checks/` with a `run_check(context)` function returning a list of findings.
-See `checks/example_port_check.py` for a template.
-
-Disable plugins at runtime:
-
-```bash
-defensive-mcp-audit --no-plugins
-```
-
-## Roadmap
-
-- [x] Plugin architecture for custom checks (#1)
-- [x] Non-invasive MCP manifest / config discovery (#2)
-- [ ] Docker / container runtime inspection
-- [ ] Historical risk trending dashboard
-- [ ] Pre-built GitHub Action (one-click)
 
 ## Development
 
 ```bash
 pip install -e ".[dev]"
-python3 -m unittest discover -s tests -v
+python -m unittest discover -s tests -v
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
+
+## Roadmap
+
+- [x] Plugin architecture (#1)
+- [x] MCP config discovery (#2)
+- [x] Composite GitHub Action
+- [ ] PyPI publish
+- [ ] Docker / container runtime inspection
+- [ ] Historical risk trending
+
+## Ethics
+
+Strictly **defensive**. Read-only inspection. No exploitation, payloads, or network attacks.
 
 ## License
 
-MIT License — see `LICENSE` file.
-
-## Ethics & Scope
-
-Strictly **defensive**.  
-Read-only inspection only. No exploitation, no network attacks, no payload generation.
-
-Contributions that stay within the defensive scope are very welcome.
-
-## Acknowledgments
-
-Inspired by real-world MCP security research (2025–2026) around localhost exposure, DNS rebinding, and confused-deputy problems in agentic systems.
+MIT — see [LICENSE](LICENSE).

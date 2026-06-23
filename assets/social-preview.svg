@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-label="defensive-mcp-audit social preview">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#09090b"/>
+      <stop offset="100%" stop-color="#18181b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <circle cx="1080" cy="120" r="180" fill="#10b981" opacity="0.08"/>
+  <circle cx="180" cy="520" r="220" fill="#22d3ee" opacity="0.06"/>
+  <rect x="88" y="88" width="72" height="72" rx="18" fill="#111827" stroke="#10b981" stroke-width="3"/>
+  <path d="M124 108 L148 120 V148 C148 160 138 170 124 174 C110 170 100 160 100 148 V120 Z" fill="none" stroke="#34d399" stroke-width="4"/>
+  <path d="M116 144 L122 150 L136 134" fill="none" stroke="#ecfdf5" stroke-width="4" stroke-linecap="round"/>
+  <text x="190" y="132" fill="#fafafa" font-family="ui-sans-serif, system-ui, sans-serif" font-size="54" font-weight="700">defensive-mcp-audit</text>
+  <text x="190" y="188" fill="#a1a1aa" font-family="ui-sans-serif, system-ui, sans-serif" font-size="30">Defensive security audit for MCP &amp; AI agent environments</text>
+  <rect x="88" y="250" width="360" height="300" rx="24" fill="#111827" stroke="#27272a"/>
+  <text x="118" y="300" fill="#34d399" font-family="ui-monospace, monospace" font-size="22" font-weight="700">$ defensive-mcp-audit</text>
+  <text x="118" y="340" fill="#e4e4e7" font-family="ui-monospace, monospace" font-size="20">Risk: LOW (score 0)</text>
+  <text x="118" y="378" fill="#a1a1aa" font-family="ui-monospace, monospace" font-size="18">✓ Ollama bound to 127.0.0.1</text>
+  <text x="118" y="412" fill="#a1a1aa" font-family="ui-monospace, monospace" font-size="18">✓ 3 MCP configs discovered</text>
+  <text x="118" y="446" fill="#fbbf24" font-family="ui-monospace, monospace" font-size="18">! 0.0.0.0:8080 (uvicorn)</text>
+  <text x="118" y="480" fill="#71717a" font-family="ui-monospace, monospace" font-size="18">→ Bind MCP servers to localhost</text>
+  <rect x="500" y="250" width="692" height="300" rx="24" fill="#111827" stroke="#27272a"/>
+  <text x="530" y="300" fill="#fafafa" font-family="ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="700">Checks</text>
+  <text x="530" y="350" fill="#d4d4d8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="24">• Listener discovery (ss / netstat)</text>
+  <text x="530" y="390" fill="#d4d4d8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="24">• MCP config parsing (Claude, Cursor, Grok)</text>
+  <text x="530" y="430" fill="#d4d4d8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="24">• Weighted risk scoring + SARIF / HTML</text>
+  <text x="530" y="470" fill="#d4d4d8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="24">• Plugin architecture for custom checks</text>
+  <rect x="88" y="580" width="220" height="36" rx="18" fill="url(#accent)" opacity="0.9"/>
+  <text x="108" y="604" fill="#042f2e" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="700">Defensive only · MIT License</text>
+</svg>

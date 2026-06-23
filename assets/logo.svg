@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="defensive-mcp-audit logo">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#09090b"/>
+  <path d="M64 18 L98 36 V68 C98 88 82 104 64 110 C46 104 30 88 30 68 V36 Z" fill="none" stroke="url(#g)" stroke-width="6"/>
+  <path d="M52 64 L60 72 L78 50" fill="none" stroke="#ecfdf5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="46" r="5" fill="#34d399"/>
+</svg>

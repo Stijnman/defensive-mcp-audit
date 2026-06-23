@@ -1,0 +1,20 @@
+# Example: consume the composite action from another repository.
+# Copy the "audit" job into your own workflow.
+name: Example Consumer
+
+on:
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: Stijnman/defensive-mcp-audit/action@v0.3.1
+        with:
+          upload-sarif: "true"
+          output: defensive-mcp-audit.sarif

@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-06-23
+
+### Added
+- Composite GitHub Action (`action/action.yml`) for one-click CI integration
+- Issue and PR templates, `SECURITY.md`, `CODEOWNERS`, Dependabot config
+- Release workflow attaching wheels/sdists to GitHub Releases
+- Repository branding assets (`assets/logo.svg`, `assets/social-preview.svg`)
+- Example consumer workflow and expanded README
+
+### Changed
+- README redesigned with badges, finding reference table, and sample output
+- CONTRIBUTING.md updated for v0.3 plugin workflow
+
 ## [0.3.0] - 2026-06-23
 
 ### Added
@@ -40,5 +53,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Rich + Typer CLI with graceful fallback
 - `pyproject.toml`, GitHub Actions workflow, `SKILL.md`
 
+[0.3.1]: https://github.com/Stijnman/defensive-mcp-audit/releases/tag/v0.3.1
 [0.3.0]: https://github.com/Stijnman/defensive-mcp-audit/releases/tag/v0.3.0
 [0.2.0]: https://github.com/Stijnman/defensive-mcp-audit/releases/tag/v0.2.0
