@@ -1,31 +1,66 @@
 # Security Policy
 
-## Supported versions
+## ⚠️ Critical Warnings
 
-| Version | Supported |
-| ------- | --------- |
-| 0.3.x   | Yes       |
-| < 0.3   | No        |
+This repository may handle sensitive data and perform automated operations.
 
-## Reporting a vulnerability
+**All users and developers MUST read and understand this document.**
 
-If you find a security issue **in this tool** (not in your local MCP setup), please report it responsibly:
+---
 
-1. **Preferred:** Open a [GitHub Security Advisory](https://github.com/Stijnman/defensive-mcp-audit/security/advisories/new) (private).
-2. **Alternative:** Open an issue with the `security` label and avoid posting exploit details publicly.
+## Developer Responsibilities
 
-We aim to acknowledge reports within **72 hours**.
+### 1. Authentication & Authorization
+- Implement proper authentication
+- Enforce authorization checks
+- Use principle of least privilege
+- Rotate credentials regularly
 
-## Scope
+### 2. Data Protection
+- Encrypt sensitive data
+- Use secure transmission
+- Respect privacy regulations
 
-This project is **defensive only**. We will not accept contributions that:
+### 3. Input Validation
+- Validate all inputs
+- Sanitize user inputs
+- Prevent injection attacks
 
-- Add exploitation, payload generation, or active attack capabilities
-- Probe remote systems without explicit user intent
-- Bypass authentication on third-party services
+### 4. Rate Limiting
+- Implement rate limiting
+- Prevent abuse
+- Use exponential backoff
 
-Reports about **risks discovered by the audit on your machine** (exposed MCP servers, weak bindings, etc.) are expected audit output — fix your local configuration using the tool's recommendations.
+---
 
-## Safe harbor
+## User Warnings
 
-Good-faith security research on the tool itself is welcome. Please keep testing local to your own environment.
+1. You are responsible for your data and credentials
+2. Ensure compliance with applicable laws
+3. Monitor automated operations
+
+---
+
+## Incident Response
+
+### If You Discover a Security Issue
+
+**DO NOT:**
+- Open a public GitHub issue
+- Discuss in public forums
+
+**DO:**
+1. Email: security@stijnman.com
+2. Include details and impact
+3. Wait for acknowledgment
+
+---
+
+## Contact
+
+**Security Issues**: security@stijnman.com  
+**Maintainer**: [Stijnman](https://github.com/Stijnman)
+
+---
+
+*Last updated: September 11, 2026*

@@ -1,3 +1,14 @@
+# Hermes Prompts - .gitignore
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
 # Python
 __pycache__/
 *.py[cod]
@@ -16,40 +27,73 @@ parts/
 sdist/
 var/
 wheels/
-share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
-.venv/
+
+# Virtual environments
+.env
+.venv
+env/
 venv/
 ENV/
 
-# Testing / coverage
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-.nox/
-
-# IDE
+# IDE specific
 .idea/
 .vscode/
 *.swp
 *.swo
 *~
 
-# Reports (local audit output)
-audit-report.html
-results.sarif
-defensive_audit_report.json
-defensive-mcp-audit.sarif
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
 
-# Node (upload script)
+# Environment variables
+.env
+.env.*
+*.env
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Credentials and secrets (NEVER commit these)
+*.key
+*.pem
+*.crt
+*.cert
+*.json.key
+secrets/
+credentials/
+.api_keys
+
+# Markdown temporary
+.markdownlint
+
+# Pre-commit
+.pre-commit-config.yaml.bak
+
+# Node (for markdownlint)
 node_modules/
-package-lock.json
-package.json
 
-# OS
-.DS_Store
-Thumbs.db
+# CI/CD artifacts
+.coverage.xml
+codecov/
+
+# Local overrides
+*.local
+*.override
+
+# OS specific
+*~
++.swp
++.swo

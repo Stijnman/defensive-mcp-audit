@@ -1,68 +1,85 @@
----
-name: defensive-mcp-audit
-description: >
-  Run a defensive, read-only security audit of the local machine for MCP and AI agent risks:
-  risky network bindings (0.0.0.0), MCP server configuration issues, confused-deputy exposure,
-  and installed agent framework inventory. Outputs text, JSON, SARIF, or HTML reports.
-metadata:
-  short-description: Defensive MCP/agent localhost security audit
-  argument-hint: "[--format json|sarif|html] [--output path]"
-  when-to-use: >
-    "audit mcp", "check localhost exposure", "mcp security", "confused deputy",
-    "scan listening ports", "defensive-mcp-audit", before enabling new MCP servers
----
-
 # defensive-mcp-audit
 
-Defensive-only audit for local MCP and AI agent environments. Read-only. No exploitation.
+**Description**: Repository for defensive-mcp-audit - [Brief description to be added]
 
-## When to use
+**Purpose**: Enable AI agents to [main purpose to be added].
 
-- Before enabling a new MCP server or agent gateway
-- After installing Hermes, Claude Desktop MCP, Cursor MCP, or Grok MCP integrations
-- In CI weekly jobs on developer machines
-- When investigating DNS rebinding / localhost trust-boundary concerns
+---
 
-## Quick commands
+## 🎯 Quick Start
 
-```bash
-# From repo clone
-python3 -m defensive_mcp_audit
+### For AI Agent Developers
 
-# Installed CLI
-pip install defensive-mcp-audit[cli]
-defensive-mcp-audit --format html -o audit-report.html
-defensive-mcp-audit --format sarif -o results.sarif
-defensive-mcp-audit --format json -o report.json
-```
+1. Review the documentation below
+2. Configure required settings
+3. Test with sample data
+4. Deploy and monitor
 
-## Python API
+### For Users
 
-```python
-from defensive_mcp_audit import audit_mcp_environment, generate_sarif, generate_html_report
+Tell your AI agent to use this repository for [use case].
 
-report = audit_mcp_environment()
-print(report["risk_level"], report["risk_score"])
-```
+---
 
-## What it checks
+## 📊 Overview
 
-1. Listening TCP services (`ss` on Linux, `netstat` fallback)
-2. MCP-related vs system vs unknown process classification
-3. Weighted risk scoring (Samba ≠ MCP server)
-4. Static MCP config discovery (Claude, Cursor, VS Code, Grok, `.mcp.json`)
-5. Installed AI framework package inventory
-6. Optional plugin checks in `checks/` (see `checks/example_port_check.py`)
+This repository contains [description].
 
-## Interpreting results
+### Core Capabilities
 
-| Finding ID | Meaning |
-|------------|---------|
-| `MCP_EXPOSED_NON_LOCALHOST` | MCP-related service on 0.0.0.0 — fix immediately |
-| `SYSTEM_EXPOSED_LISTENER` | OS service (e.g. Samba) — informational |
-| `MCP_CONFIG_RISK` | Risky patterns in MCP client config |
-| `CONFUSED_DEPUTY_RISK` | Local MCP surface reachable by agents/browsers |
+| Category | Description | Status |
+|----------|-------------|--------|
+| [Feature 1] | [Description] | ✅ Production |
+| [Feature 2] | [Description] | ✅ Production |
 
-## Ethics
+---
 
-Strictly defensive. Never generate exploits, payloads, or offensive guidance.
+## 🔒 Security Overview
+
+⚠️ **IMPORTANT**: Please read [SECURITY.md](./SECURITY.md) before using this repository.
+
+### Key Security Principles
+
+1. Data Privacy
+2. Input Validation
+3. Secure Configuration
+4. Rate Limiting
+5. Audit Trail
+
+---
+
+## 📚 Documentation
+
+| Document | Description | Required Reading |
+|----------|-------------|------------------|
+| [SECURITY.md](./SECURITY.md) | Security policy | ✅ Yes |
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | Contribution guide | ⚠️ For contributors |
+| [TESTING.md](./TESTING.md) | Testing guide | ⚠️ For contributors |
+| [README.md](./README.md) | Overview | ✅ Yes |
+| [CHANGELOG.md](./CHANGELOG.md) | Changes | ⚠️ For reference |
+
+---
+
+## 📜 License
+
+This repository is licensed under the **MIT License**. See [LICENSE](./LICENSE).
+
+---
+
+## 👤 Maintainer
+
+**Stijnman** - [GitHub Profile](https://github.com/Stijnman)
+
+---
+
+## 📞 Support
+
+| Issue Type | How to Get Help |
+|-----------|-----------------|
+| Bug Report | Open a [GitHub Issue](https://github.com/Stijnman/defensive-mcp-audit/issues) |
+| Security Issue | Email: security@stijnman.com |
+| General Question | Open a [GitHub Discussion](https://github.com/Stijnman/defensive-mcp-audit/discussions) |
+
+---
+
+*Last updated: September 11, 2026*
