@@ -1,4 +1,4 @@
-# Pre-commit hooks configuration for competitor_researcher
+# Pre-commit hooks configuration for defensive-mcp-audit
 # See https://pre-commit.com for more information
 # Install with: pip install pre-commit && pre-commit install
 

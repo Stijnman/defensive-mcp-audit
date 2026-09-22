@@ -66,7 +66,7 @@ def _server_transport(server: Dict[str, Any]) -> str:
 def _server_has_auth_hints(server: Dict[str, Any]) -> bool:
     env = server.get("env") or {}
     if not isinstance(env, dict):
-        return False
+        env = {}
     auth_keys = ("token", "api_key", "apikey", "auth", "secret", "password")
     for key, value in env.items():
         key_lower = str(key).lower()
@@ -96,7 +96,7 @@ def _server_risk_notes(name: str, server: Dict[str, Any]) -> List[str]:
 
 
 def parse_mcp_configs(config_paths: List[Path] | None = None) -> Tuple[List[Dict[str, Any]], List[Path]]:
-    paths = config_paths or discover_mcp_config_paths()
+    paths = discover_mcp_config_paths() if config_paths is None else config_paths
     servers: List[Dict[str, Any]] = []
     for path in paths:
         if path.is_dir():
@@ -104,6 +104,8 @@ def parse_mcp_configs(config_paths: List[Path] | None = None) -> Tuple[List[Dict
             if metadata.exists():
                 try:
                     payload = _load_json(metadata)
+                    if not isinstance(payload, dict):
+                        continue
                     servers.append(
                         {
                             "name": path.name,
@@ -113,12 +115,12 @@ def parse_mcp_configs(config_paths: List[Path] | None = None) -> Tuple[List[Dict
                             "server_identifier": payload.get("serverIdentifier", path.name),
                         }
                     )
-                except (OSError, json.JSONDecodeError):
+                except (OSError, ValueError):
                     continue
             continue
         try:
             payload = _load_json(path)
-        except (OSError, json.JSONDecodeError):
+        except (OSError, ValueError):
             continue
         for name, server in _extract_servers(payload).items():
             if not isinstance(server, dict):
