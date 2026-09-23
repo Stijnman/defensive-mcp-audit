@@ -142,3 +142,7 @@ Strictly **defensive**. Read-only inspection. No exploitation, payloads, or netw
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+## Flagship integration
+
+This project remains independently usable and is not deprecated. Its capabilities are also consumed by [AetherOS](https://github.com/Stijnman/AetherOS) and [AegisAI](https://github.com/Stijnman/AegisAI), where they are integrated with complementary repositories behind shared platform contracts. This repository remains the source of truth for its component-specific implementation.
