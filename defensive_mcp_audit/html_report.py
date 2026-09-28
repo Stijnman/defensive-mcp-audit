@@ -17,7 +17,9 @@ RISK_COLORS = {
 def _render_findings(findings: list[Dict[str, Any]]) -> str:
     blocks = []
     for finding in findings:
-        severity = finding.get("severity", "info")
+        severity = str(finding.get("severity", "info"))
+        if severity not in {"critical", "high", "medium", "low", "info"}:
+            severity = "info"
         value = finding.get("value")
         if isinstance(value, (list, dict)):
             value_text = html.escape(json.dumps(value, indent=2))
@@ -109,7 +111,7 @@ def generate_html_report(report: Dict[str, Any]) -> str:
       </div>
       <div style="text-align:right">
         <div class="badge">RISK {html.escape(risk_level.upper())}</div>
-        <div class="muted" style="margin-top:.35rem">Score: {report.get('risk_score', 0)}</div>
+        <div class="muted" style="margin-top:.35rem">Score: {html.escape(str(report.get('risk_score', 0)))}</div>
       </div>
     </div>
     <div class="grid">
