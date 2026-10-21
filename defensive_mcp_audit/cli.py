@@ -1,22 +1,24 @@
-"""CLI entry point."""
+"""CLI entry point with dependency-free argument handling."""
 
 from __future__ import annotations
 
+import argparse
+import contextlib
+import io
 import json
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Sequence
 
 from defensive_mcp_audit.audit import audit_mcp_environment
+from defensive_mcp_audit.constants import VERSION
 from defensive_mcp_audit.html_report import generate_html_report
 from defensive_mcp_audit.sarif import generate_sarif
 from defensive_mcp_audit.text_report import RICH_AVAILABLE, print_text_report
 
 try:
-    import typer
     from rich.console import Console
 except ImportError:
-    typer = None
     Console = None
 
 
@@ -28,56 +30,61 @@ def _write_report(
     verbose: bool,
     console: Optional[object],
 ) -> None:
+    """Write exactly one report to the selected file or stdout.
+
+    ``verbose`` is retained for compatibility; machine formats no longer need it
+    to be emitted. Save notices go to stderr so stdout remains machine-readable.
+    """
     if fmt == "json":
         content = json.dumps(report, indent=2)
     elif fmt == "sarif":
         content = json.dumps(generate_sarif(report), indent=2)
     elif fmt == "html":
         content = generate_html_report(report)
+    elif fmt == "text":
+        if output is None:
+            print_text_report(report, console)
+            return
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            print_text_report(report)
+        content = stream.getvalue()
     else:
-        print_text_report(report, console)
-        content = None
+        raise ValueError(f"Unsupported output format: {fmt}")
 
-    if content and output:
+    content = content.rstrip("\n") + "\n"
+    if output is not None:
         output.write_text(content, encoding="utf-8")
-        if RICH_AVAILABLE and console is not None:
-            console.print(f"\n[green]Report saved to[/green] {output}")
-        else:
-            print(f"\nReport saved to {output}")
-    elif content and verbose:
-        print(content)
+        print(f"Report saved to {output}", file=sys.stderr)
+    else:
+        sys.stdout.write(content)
 
 
-def run_cli() -> None:
-    if typer is None:
-        report = audit_mcp_environment()
-        print_text_report(report)
-        Path("defensive_audit_report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
-        print("\nReport also saved to defensive_audit_report.json (JSON)")
-        return
-
-    app = typer.Typer(help="Defensive MCP / AI Agent Security Audit")
-
-    @app.callback(invoke_without_command=True)
-    def main(
-        output: Optional[Path] = typer.Option(None, "--output", "-o", help="Output file path"),
-        fmt: str = typer.Option("text", "--format", "-f", help="text | json | sarif | html"),
-        verbose: bool = typer.Option(False, "--verbose", "-v"),
-        no_plugins: bool = typer.Option(False, "--no-plugins", help="Disable plugin checks"),
-    ) -> None:
-        if not RICH_AVAILABLE:
-            print(
-                "[warning] rich/typer not installed. Falling back to basic output.",
-                file=sys.stderr,
-            )
-        console = Console() if RICH_AVAILABLE else None
-        report = audit_mcp_environment(enable_plugins=not no_plugins)
-        if output and fmt == "text":
-            ext = output.suffix.lower()
-            fmt = {".json": "json", ".sarif": "sarif", ".html": "html"}.get(ext, fmt)
-        _write_report(report, output=output, fmt=fmt, verbose=verbose, console=console)
-
-    app()
+def run_cli(argv: Optional[Sequence[str]] = None) -> None:
+    parser = argparse.ArgumentParser(description="Defensive MCP / AI Agent Security Audit")
+    parser.add_argument("--output", "-o", type=Path, help="Output file path (default: stdout)")
+    parser.add_argument(
+        "--format", "-f", dest="fmt", choices=("text", "json", "sarif", "html"),
+        default="text", help="Report format (default: text)",
+    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Retained for compatibility")
+    parser.add_argument("--no-plugins", action="store_true", help="Disable plugin checks")
+    parser.add_argument("--version", action="version", version=VERSION)
+    args = parser.parse_args(argv)
+    fmt = args.fmt
+    # Preserve output-extension inference when no non-text format is selected.
+    if args.output is not None and fmt == "text":
+        fmt = {".json": "json", ".sarif": "sarif", ".html": "html"}.get(
+            args.output.suffix.lower(), fmt,
+        )
+    console = Console() if RICH_AVAILABLE and Console is not None else None
+    report = audit_mcp_environment(enable_plugins=not args.no_plugins)
+    try:
+        _write_report(
+            report, output=args.output, fmt=fmt, verbose=args.verbose, console=console,
+        )
+    except OSError as error:
+        parser.error(f"cannot write report: {error}")
 
 
 if __name__ == "__main__":

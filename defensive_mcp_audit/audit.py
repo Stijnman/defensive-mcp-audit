@@ -93,12 +93,12 @@ def audit_mcp_environment(
                 "id": "UNKNOWN_EXPOSED_LISTENER",
                 "category": "Network Exposure",
                 "severity": "medium",
-                "title": "Unclassified services listening on all interfaces",
+                "title": "Unclassified services listening on non-localhost interfaces",
                 "value": [
                     f"{item['address']}:{item['port']} ({item.get('process') or 'unknown'})"
                     for item in risky_unknown
                 ],
-                "note": "Review whether these listeners are required. Unknown 0.0.0.0 bindings increase attack surface.",
+                "note": "Review whether these listeners are required. Wildcard and explicit non-loopback bindings increase attack surface; firewall reachability is not tested.",
             }
         )
 
@@ -223,7 +223,8 @@ def audit_mcp_environment(
         )
         recommendations.extend(
             [
-                "Require authentication tokens on all MCP/WebSocket/HTTP endpoints",
+                "Require appropriate authentication on MCP HTTP/WebSocket endpoints",
+                "Validate the Origin header on MCP HTTP connections to mitigate DNS rebinding",
                 "Sandbox web-facing agent tools and validate untrusted input",
             ]
         )
