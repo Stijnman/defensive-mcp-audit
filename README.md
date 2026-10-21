@@ -32,7 +32,7 @@ This tool gives you a **fast, actionable, defensive-only** audit of those risks 
 ## Features
 
 | Capability | Description |
-|------------|-------------|
+| --- | --- |
 | Listener discovery | `ss` on Linux, `netstat` fallback elsewhere |
 | Smart classification | MCP-related vs system vs unknown processes |
 | Weighted scoring | Samba ≠ MCP — fewer false CRITICAL alerts |
@@ -54,9 +54,11 @@ python -m defensive_mcp_audit --format html -o audit-report.html
 python -m defensive_mcp_audit --format sarif -o results.sarif
 ```
 
+All command-line options work with the base installation; the optional `cli` extra adds Rich terminal formatting. JSON, SARIF, and HTML go to stdout unless `--output` is given, so `python -m defensive_mcp_audit --format json > report.json` works without `--verbose`. Text reports can also be saved with `--output report.txt`. Save notices go to stderr, and no extra JSON file is created implicitly. Invalid formats fail before inspection begins.
+
 ### Example output
 
-```
+```text
 Risk: HIGH (65)
 
 Findings:
@@ -98,16 +100,16 @@ Or run the full workflow — see [`.github/workflows/defensive-mcp-audit.yml`](.
 ## Finding reference
 
 | ID | Severity | Meaning |
-|----|----------|---------|
-| `MCP_EXPOSED_NON_LOCALHOST` | high | MCP-related service on `0.0.0.0` — fix immediately |
-| `UNKNOWN_EXPOSED_LISTENER` | medium | Unclassified `0.0.0.0` listener — review |
+| --- | --- | --- |
+| `MCP_EXPOSED_NON_LOCALHOST` | high | MCP-related service on a wildcard or explicit non-loopback IP — review and restrict its binding |
+| `UNKNOWN_EXPOSED_LISTENER` | medium | Unclassified non-loopback listener — review |
 | `SYSTEM_EXPOSED_LISTENER` | info | OS service (e.g. Samba) — noted, low MCP impact |
 | `MCP_CONFIG_RISK` | medium | Risky patterns in MCP client config |
 | `CONFUSED_DEPUTY_RISK` | medium/high | Local MCP surface + agent/browser trust boundary |
 
 ## Project structure
 
-```
+```text
 defensive-mcp-audit/
 ├── defensive_mcp_audit/     # Core package
 ├── checks/                  # Plugin checks
@@ -138,6 +140,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
 ## Ethics
 
 Strictly **defensive**. Read-only inspection. No exploitation, payloads, or network attacks.
+
+### What a finding proves
+
+Listener checks identify wildcard and explicit non-loopback IP bindings; they do not establish Internet reachability or test firewall rules. Service classification is heuristic: a common port or process name is not proof that a service speaks MCP. Config inspection does not execute server commands, contact endpoints, verify OAuth flows, or establish whether authentication is actually enforced. Treat missing authentication hints as a review prompt, not a confirmed vulnerability, and do not publish reports containing private paths or environment details without review.
+
+For local HTTP servers, localhost binding is only one layer. The [MCP HTTP transport specification](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports/streamable-http#security--endpoint) also requires Origin validation to mitigate DNS rebinding and recommends appropriate authentication. Stdio uses a different trust boundary; HTTP endpoint authentication checks do not apply to a local stdio subprocess in the same way.
 
 ## License
 

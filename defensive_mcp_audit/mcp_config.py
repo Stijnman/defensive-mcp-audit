@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import ipaddress
 import json
 import os
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
+from urllib.parse import urlsplit
 
 from defensive_mcp_audit.constants import MCP_CONFIG_CANDIDATES, RISKY_TOOL_KEYWORDS
 
@@ -64,29 +66,59 @@ def _server_transport(server: Dict[str, Any]) -> str:
 
 
 def _server_has_auth_hints(server: Dict[str, Any]) -> bool:
+    """Detect nonempty static credential clues; this cannot verify runtime auth."""
     env = server.get("env") or {}
     if not isinstance(env, dict):
         env = {}
     auth_keys = ("token", "api_key", "apikey", "auth", "secret", "password")
+
+    def nonempty(value: Any) -> bool:
+        return bool(value.strip()) if isinstance(value, str) else bool(value)
+
     for key, value in env.items():
         key_lower = str(key).lower()
-        if any(fragment in key_lower for fragment in auth_keys) and value:
+        if any(fragment in key_lower for fragment in auth_keys) and nonempty(value):
             return True
     headers = server.get("headers") or {}
     if isinstance(headers, dict):
-        for key in headers:
-            if "auth" in str(key).lower():
+        for key, value in headers.items():
+            key_lower = str(key).lower()
+            if any(fragment in key_lower for fragment in auth_keys) and nonempty(value):
                 return True
     return False
+
+
+def _is_loopback_host(host: str) -> bool:
+    normalized = host.rstrip(".").lower()
+    if normalized == "localhost" or normalized.endswith(".localhost"):
+        return True
+    try:
+        return ipaddress.ip_address(normalized).is_loopback
+    except ValueError:
+        return False
+
+
+def _http_transport_risk(url: Any) -> str | None:
+    """Return a risk hint only for classifiable, cleartext non-loopback HTTP."""
+    if not isinstance(url, str) or not url.strip():
+        return None
+    try:
+        parsed = urlsplit(url.strip())
+        host = parsed.hostname
+    except ValueError:
+        return None
+    if parsed.scheme.lower() == "http" and host and not _is_loopback_host(host):
+        return "non-loopback HTTP endpoint uses cleartext — review transport protection"
+    return None
 
 
 def _server_risk_notes(name: str, server: Dict[str, Any]) -> List[str]:
     notes: List[str] = []
     transport = _server_transport(server)
     if transport == "remote":
-        notes.append("remote endpoint configured — verify TLS and auth")
-    if not _server_has_auth_hints(server) and transport in {"remote", "stdio"}:
-        notes.append("no obvious auth/env secret configured")
+        transport_risk = _http_transport_risk(server.get("url"))
+        if transport_risk:
+            notes.append(transport_risk)
     joined = json.dumps(server).lower()
     for keyword in RISKY_TOOL_KEYWORDS:
         if keyword in joined or keyword in name.lower():
